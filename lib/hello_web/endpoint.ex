@@ -7,7 +7,8 @@ defmodule HelloWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_hello_key",
-    signing_salt: "MR9snJBT",
+    # TODO: 服务在调试时出现问题，重新生成项目并编译之后再运行就可以了。项目代码diff发现只有这里变了
+    signing_salt: "kPi+haNm",
     same_site: "Lax"
   ]
 
