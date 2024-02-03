@@ -31,7 +31,7 @@ defmodule HelloWeb.Router do
 
     get "/", PageController, :home
     get "/hello", HelloController, :index
-    get "/hello//:messenger", HelloController, :show
+    get "/hello/:messenger", HelloController, :show
 
     # resources
     resources "/users", UserController
