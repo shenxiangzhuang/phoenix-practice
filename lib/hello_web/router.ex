@@ -11,6 +11,17 @@ defmodule HelloWeb.Router do
     plug HelloWeb.Plugs.Locale, "en"
   end
 
+  pipeline :auth do
+    HelloWeb.Authentication
+  end
+
+  # Note that pipelines themselves are plugs, so we can plug a pipeline inside another pipeline
+  # pipeline :auth do
+  #   plug :browser
+  #   plug :ensure_authenticated_user
+  #   plug :ensure_user_owns_review
+  # end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -21,12 +32,35 @@ defmodule HelloWeb.Router do
     get "/", PageController, :home
     get "/hello", HelloController, :index
     get "/hello//:messenger", HelloController, :show
+
+    # resources
+    resources "/users", UserController
+    resources "/posts", PostController, only: [:index, :show]
+    resources "comments", CommentController, except: [:delete]
+    resources "/reviews", ReviewController
+
+    # nested resources
+    resources "/users", UserController do
+      resources "/posts", PostController
+    end
+
   end
 
   # Other scopes may use custom stacks.
   # scope "/api", HelloWeb do
   #   pipe_through :api
   # end
+
+
+  scope "/api", HelloWeb.Api, as: :api do
+    pipe_through :api
+
+    scope "/v1", V1, as: :v1 do
+      resources "/images", ImageController
+      resources "reviews", ReviewController
+      resources "/users", UserController
+    end
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:hello, :dev_routes) do
